@@ -12,7 +12,7 @@ runs:
   env:
     TERRAFORM_WORK_DIR: ${{ inputs.terraform-work-dir }}
   args:
-    - "C"
+    - "-c"
     - |
       export HOME=/root
       set -euo pipefail
