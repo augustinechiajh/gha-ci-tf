@@ -17,7 +17,7 @@ runs:
       export HOME=/root
       set -euo pipefail
       LOGFILE="/tmp/action_log_$(date +%Y%m%d%H%M%S).log"
-      echo "Logfile created at $(LOGFILE)"
+      echo "Logfile created at ${LOGFILE}"
 
       # Validate inputs
       if [ -z "${TERRAFORM_WORK_DIR}" ]; then
@@ -32,19 +32,19 @@ runs:
 
       cd "${TERRAFORM_WORK_DIR}"
       
-      echo "Running terraform fmt" | tee -a ${LOGFILE}
+      echo "Running terraform fmt..." | tee -a ${LOGFILE}
       terraform fmt | tee -a ${LOGFILE}
 
-      echo "Terraform init" | tee -a ${LOGFILE}
+      echo "Initializing terraform..." | tee -a ${LOGFILE}
       terraform init -backend=false | tee -a ${LOGFILE}
 
-      echo "Terraform validation" | tee -a ${LOGFILE}
+      echo "Validating terraform..." | tee -a ${LOGFILE}
       terraform validate | tee -a ${LOGFILE}
 
-      echo "Initializing TFLint" | tee -a ${LOGFILE}
+      echo "Initializing TFLint..." | tee -a ${LOGFILE}
       tflint --init | tee -a ${LOGFILE}
 
-      echo "Running TFLint" | tee -a ${LOGFILE}
+      echo "Running TFLint..." | tee -a ${LOGFILE}
       tflint | tee -a ${LOGFILE}
 
       echo "Terraform validation completed successfully." | tee -a ${LOGFILE}
