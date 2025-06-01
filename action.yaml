@@ -1,0 +1,50 @@
+name: Terraform Validation
+
+inputs:
+  terraform-work-dir:
+    description: 'Terraform working directory'
+    default: 'iac/tf'
+
+runs:
+  using: 'docker'
+  image: docker://ghcr.io/augustinechiajh/terraform-tools:latest
+  entrypoint: /bin/bash
+  env:
+    TERRAFORM_WORK_DIR: ${{ inputs.terraform-work-dir }}
+  args:
+    - "C"
+    - |
+      export HOME=/root
+      set -euo pipefail
+      LOGFILE="/tmp/action_log_$(date +%Y%m%d%H%M%S).log"
+      echo "Logfile created at $(LOGFILE)"
+
+      # Validate inputs
+      if [ -z "${TERRAFORM_WORK_DIR}" ]; then
+        echo "Error: 'terraform-work-dir' input is required but not set." | tee -a ${LOGFILE}
+        exit 1
+      fi
+
+      if [ ! -d "${TERRAFORM_WORK_DIR}" ]; then
+        echo "Error: Specified directory '${TERRAFORM_WORK_DIR}' does not exist or is not a directory." | tee -a ${LOGFILE}
+        exit 1
+      fi
+
+      cd "${TERRAFORM_WORK_DIR}"
+      
+      echo "Running terraform fmt" | tee -a ${LOGFILE}
+      terraform fmt | tee -a ${LOGFILE}
+
+      echo "Terraform init" | tee -a ${LOGFILE}
+      terraform init -backend=false | tee -a ${LOGFILE}
+
+      echo "Terraform validation" | tee -a ${LOGFILE}
+      terraform validate | tee -a ${LOGFILE}
+
+      echo "Initializing TFLint" | tee -a ${LOGFILE}
+      tflint --init | tee -a ${LOGFILE}
+
+      echo "Running TFLint" | tee -a ${LOGFILE}
+      tflint | tee -a ${LOGFILE}
+
+      echo "Terraform validation completed successfully." | tee -a ${LOGFILE}
