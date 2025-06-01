@@ -8,7 +8,7 @@ inputs:
 runs:
   using: 'docker'
   image: docker://ghcr.io/augustinechiajh/terraform-tools:latest
-  entrypoint: /bin/bash
+  entrypoint: /bin/sh
   env:
     TERRAFORM_WORK_DIR: ${{ inputs.terraform-work-dir }}
   args:
