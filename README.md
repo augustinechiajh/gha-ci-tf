@@ -1,3 +1,4 @@
+# Simple Terraform Reusable Action
 This GitHub Action performs Terraform CI checks, including:
 
 - `terraform fmt` (formatting)
@@ -8,7 +9,7 @@ This GitHub Action performs Terraform CI checks, including:
 
 ## How to run this in your GitHub Actions pipeline
 
-Add the following step to your workflow to run CI checks on your Terraform configuration:
+Add the following to your workflow to run CI checks on your Terraform configuration:
 
 ```yaml
 jobs:
