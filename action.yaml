@@ -3,6 +3,7 @@ name: Terraform Validation
 inputs:
   terraform-work-dir:
     description: 'Terraform working directory'
+    required: false
     default: 'iac/tf'
 
 runs:
@@ -14,12 +15,13 @@ runs:
   args:
     - "-c"
     - |
-      export HOME=/root
       set -euo pipefail
-      LOGFILE="/tmp/action_log_$(date +%Y%m%d%H%M%S).log"
-      echo "Logfile created at ${LOGFILE}"
+      export HOME=/root
 
-      # Validate inputs
+      LOGFILE="/tmp/tf_ci_log_$(date +%Y%m%d%H%M%S).log"
+
+      echo "## Starting Terraform CI Validation" | tee -a ${LOGFILE}
+
       if [ -z "${TERRAFORM_WORK_DIR}" ]; then
         echo "Error: 'terraform-work-dir' input is required but not set." | tee -a ${LOGFILE}
         exit 1
@@ -48,3 +50,7 @@ runs:
       tflint | tee -a ${LOGFILE}
 
       echo "Terraform validation completed successfully." | tee -a ${LOGFILE}
+
+      # Show summary in GitHub Actions UI
+      echo "## Terraform CI Log" >> $GITHUB_STEP_SUMMARY
+      cat $LOGFILE >> $GITHUB_STEP_SUMMARY
